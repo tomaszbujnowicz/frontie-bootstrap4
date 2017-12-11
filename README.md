@@ -67,7 +67,7 @@ gulp build
 
 ## Notes
 
-  Based on [Frontie](https://github.com/tomaszbujnowicz/frontie)
+Based on [Frontie](https://github.com/tomaszbujnowicz/frontie)
 
 ## Copyright and license
 

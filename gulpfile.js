@@ -59,8 +59,8 @@ gulp.task('css-watch',['css'],browserSync.reload)
 // JS Bootstrap
 gulp.task('js-bootstrap', function() {
   return gulp.src([
-    paths.src + 'js/vendor/popper.min.js',
-    paths.src + 'js/vendor/bootstrap.min.js'
+    paths.src + 'js/bootstrap/popper.min.js',
+    paths.src + 'js/bootstrap/bootstrap.min.js'
   ])
     .pipe(plumber({ errorHandler: onError }))
     .pipe(concat('bootstrap.js'))
@@ -148,7 +148,7 @@ gulp.task('default', function(done) {
 // Build
 gulp.task('build', function (done) {
   runSequence('clean:dist',
-    ['css', 'js-vendor', 'js-main', 'images', 'twig', 'html'],
+    ['css', 'js-bootstrap', 'js-vendor', 'js-main', 'images', 'twig', 'html'],
     done
   )
 })
