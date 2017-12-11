@@ -1,0 +1,50 @@
+{
+  "name": "frontie-bootstrap4",
+  "version": "1.0.0",
+  "description": "Frontie Bootstrap 4 is a frontend boilerplate using Gulp for task automation. Based on Bootstrap 4 enhanced with Twig.js, Autoprefixer and Browsersync.",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomaszbujnowicz/frontie-bootstrap4"
+  },
+  "keywords": [
+    "gulp",
+    "npm",
+    "browsersync",
+    "front-end development",
+    "sass",
+    "boilerplate",
+    "bootstrap4",
+    "bootstrap",
+    "twig.js"
+  ],
+  "author": {
+    "name": "Tomasz Bujnowicz",
+    "email": "tomasz@prollective.com",
+    "url": "https://prollective.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tomaszbujnowicz/frontie-bootstrap4/issues"
+  },
+  "homepage": "https://github.com/tomaszbujnowicz/frontie-bootstrap4#readme",
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "css-clean": "^1.7.1",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.0.0",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-foreach": "^0.1.0",
+    "gulp-notify": "^3.0.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-twig": "^1.1.1",
+    "gulp-uglify": "^3.0.0",
+    "run-sequence": "^2.2.0"
+  }
+}
