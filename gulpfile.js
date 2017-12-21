@@ -12,7 +12,8 @@ var gulp = require('gulp'),
     runSequence = require('run-sequence'),
     del = require ('del'),
     twig = require('gulp-twig'),
-    foreach = require('gulp-foreach');
+    foreach = require('gulp-foreach'),
+    ghPages = require('gulp-gh-pages');
 
 // Paths
 var paths = {
@@ -160,4 +161,10 @@ gulp.task('watch', function(done) {
     ['browser-sync'],
     done
   )
+});
+
+// Deploy
+gulp.task('deploy', function() {
+  return gulp.src(paths.dist + '**/*')
+    .pipe(ghPages());
 });

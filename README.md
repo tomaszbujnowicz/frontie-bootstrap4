@@ -19,6 +19,9 @@ Based on Bootstrap 4 enhanced with Twig.js, Autoprefixer and Browsersync.
 * [Browsersync](https://www.browsersync.io/)  
   Time-saving synchronised browser testing
 
+* [Github pages](https://www.npmjs.com/package/gulp-gh-pages)  
+  Gulp plugin to publish contents to Github pages
+
 ## Installation requirements
 * [Node.js](https://nodejs.org/)
 * [Gulp](http://gulpjs.com/)
@@ -43,6 +46,11 @@ gulp watch
 **Generate a fresh build of your project to /dist folder:**
 ```sh
 gulp build
+```
+
+**Publish contents from /dist folder to Github pages:**
+```sh
+gulp deploy
 ```
 
 ## Working Directories
