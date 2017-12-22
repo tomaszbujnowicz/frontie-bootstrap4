@@ -22,6 +22,8 @@ Based on Bootstrap 4 enhanced with Twig.js, Autoprefixer and Browsersync.
 * [Github pages](https://www.npmjs.com/package/gulp-gh-pages)  
   Gulp plugin to publish contents to Github pages
 
+* [Source Maps] (https://www.npmjs.com/package/gulp-sourcemaps)
+
 ## Installation requirements
 * [Node.js](https://nodejs.org/)
 * [Gulp](http://gulpjs.com/)
