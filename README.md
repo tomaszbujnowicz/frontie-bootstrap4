@@ -29,11 +29,11 @@ Based on Bootstrap 4 enhanced with Twig.js, Autoprefixer and Browsersync.
 ## Quick start: Installation
 **Download all the project dependencies:**
 ```sh
-npm install
+npm install / yarn
 ```
 
 ## Development: Tasks
-**Watch and develop:**
+**Build and watch:**
 ```sh
 gulp
 ```
