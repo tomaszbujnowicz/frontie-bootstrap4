@@ -109,13 +109,6 @@ gulp.task('js-main',function(){
 });
 gulp.task('js-main-watch',['js-main'],browserSync.reload)
 
-// HTML
-gulp.task('html', function() {
-  return gulp.src(paths.src + '*.html')
-    .pipe(gulp.dest(paths.dist))
-});
-gulp.task('html-watch',['html'],browserSync.reload)
-
 // Images
 gulp.task('images', function() {
   return gulp.src([
@@ -147,14 +140,24 @@ gulp.task('twig',function(){
 });
 gulp.task('twig-watch',['twig'],browserSync.reload);
 
+// Copy:misc
+gulp.task('copy:misc', function() {
+  return gulp.src([
+    paths.src + '*.xml',
+    paths.src + '*.txt'
+  ])
+    .pipe(gulp.dest(paths.dist));
+});
+gulp.task('copy:misc-watch',['copy:misc'],browserSync.reload)
+
 // Watch
 gulp.task('gulp-watch', function() {
-  gulp.watch(paths.src + '*.html', ['html-watch']);
   gulp.watch(paths.src + 'img/**/*', ['images-watch']);
   gulp.watch(paths.src + 'sass/**/*.scss', ['css-watch']);
   gulp.watch(paths.src + 'js/main.js', ['js-main-watch']);
   gulp.watch(paths.src + 'js/vendor/**/*.js', ['js-vendor-watch']);
   gulp.watch(paths.src + 'templates/**/*.twig', ['twig-watch']);
+  gulp.watch([paths.src + '*.xml', paths.src + '*.txt'], ['copy:misc-watch']);
 });
 
 // Default
@@ -168,7 +171,7 @@ gulp.task('default', function(done) {
 // Build
 gulp.task('build', function (done) {
   runSequence('clean:dist',
-    ['css', 'js-bootstrap', 'js-vendor', 'js-main', 'images', 'twig', 'html'],
+    ['css', 'js-bootstrap', 'js-vendor', 'js-main', 'images', 'twig', 'copy:misc'],
     done
   )
 })
