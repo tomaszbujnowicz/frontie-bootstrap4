@@ -3,7 +3,6 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'),
     sassLint = require('gulp-sass-lint'),
     autoprefixer = require('gulp-autoprefixer'),
-    cleanCSS = require('gulp-clean-css'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
@@ -15,7 +14,8 @@ var gulp = require('gulp'),
     twig = require('gulp-twig'),
     foreach = require('gulp-foreach'),
     ghPages = require('gulp-gh-pages'),
-    sourcemaps = require('gulp-sourcemaps');
+    sourcemaps = require('gulp-sourcemaps'),
+    changed = require('gulp-changed');
 
 // Paths
 var paths = {
@@ -54,13 +54,12 @@ gulp.task('css', function () {
   return gulp.src(paths.src + 'sass/bootstrap.scss')
     .pipe(plumber({ errorHandler: onError }))
     .pipe(sourcemaps.init())
-    .pipe(sass())
+    .pipe(sass({ outputStyle: 'compressed' }))
     .pipe(autoprefixer('last 2 version'))
-    .pipe(cleanCSS())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest(paths.dist + 'css'));
+    .pipe(sourcemaps.write('./', {addComment: false}))
+    .pipe(gulp.dest(paths.dist + 'css'))
+    .pipe(browserSync.reload({stream:true}))
 });
-gulp.task('css-watch',['css'],browserSync.reload)
 
 // SASS Lint
 gulp.task('sass-lint', function () {
@@ -80,10 +79,10 @@ gulp.task('js-bootstrap', function() {
     .pipe(sourcemaps.init())
     .pipe(concat('bootstrap.js'))
     .pipe(uglify())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest(paths.dist + 'js'));
+    .pipe(sourcemaps.write('./', {addComment: false}))
+    .pipe(gulp.dest(paths.dist + 'js'))
+    .pipe(browserSync.reload({stream:true}))
 });
-gulp.task('js-bootstrap-watch',['js-bootstrap'],browserSync.reload)
 
 // JS Vendor
 gulp.task('js-vendor', function() {
@@ -92,10 +91,10 @@ gulp.task('js-vendor', function() {
     .pipe(sourcemaps.init())
     .pipe(concat('vendor.js'))
     .pipe(uglify())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest(paths.dist + 'js'));
+    .pipe(sourcemaps.write('./', {addComment: false}))
+    .pipe(gulp.dest(paths.dist + 'js'))
+    .pipe(browserSync.reload({stream:true}))
 });
-gulp.task('js-vendor-watch',['js-vendor'],browserSync.reload)
 
 // JS Main
 gulp.task('js-main',function(){
@@ -104,10 +103,10 @@ gulp.task('js-main',function(){
     .pipe(sourcemaps.init())
     .pipe(concat('main.min.js'))
     .pipe(uglify())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest(paths.dist + 'js'));
+    .pipe(sourcemaps.write('./', {addComment: false}))
+    .pipe(gulp.dest(paths.dist + 'js'))
+    .pipe(browserSync.reload({stream:true}))
 });
-gulp.task('js-main-watch',['js-main'],browserSync.reload)
 
 // Images
 gulp.task('images', function() {
@@ -116,29 +115,30 @@ gulp.task('images', function() {
   ], {
     'dot': true // include hidden files
   })
-    .pipe(gulp.dest(paths.dist + 'img'));
+    .pipe(changed(paths.dist + 'img'))
+    .pipe(gulp.dest(paths.dist + 'img'))
+    .pipe(browserSync.reload({stream:true}))
 });
-gulp.task('images-watch',['images'],browserSync.reload)
 
 // Twig
 gulp.task('twig',function(){
   return gulp.src([
-    paths.src + 'templates/**/*.twig',
-    '!' + paths.src + 'templates/layouts/**/*.twig',
-    '!' + paths.src + 'templates/components/**/*.twig'
+    paths.src + 'templates/**/*.{twig,html}',
+    '!' + paths.src + 'templates/layouts/**/*.{twig,html}',
+    '!' + paths.src + 'templates/components/**/*.{twig,html}'
   ])
-  .pipe(plumber({
-    errorHandler: function (error) {
-      console.log(error.message);
-      this.emit('end');
-  }}))
-  .pipe(foreach(function(stream,file){
-    return stream
-      .pipe(twig({}))
-  }))
-  .pipe(gulp.dest(paths.dist));
+    .pipe(plumber({
+      errorHandler: function (error) {
+        console.log(error.message);
+        this.emit('end');
+    }}))
+    .pipe(foreach(function(stream,file){
+      return stream
+        .pipe(twig({}))
+    }))
+    .pipe(changed(paths.dist))
+    .pipe(gulp.dest(paths.dist));
 });
-gulp.task('twig-watch',['twig'],browserSync.reload);
 
 // Copy:misc
 gulp.task('copy:misc', function() {
@@ -146,42 +146,35 @@ gulp.task('copy:misc', function() {
     paths.src + '*.xml',
     paths.src + '*.txt'
   ])
-    .pipe(gulp.dest(paths.dist));
+    .pipe(changed(paths.dist))
+    .pipe(gulp.dest(paths.dist))
+    .pipe(browserSync.reload({stream:true}))
 });
-gulp.task('copy:misc-watch',['copy:misc'],browserSync.reload)
 
 // Watch
 gulp.task('gulp-watch', function() {
-  gulp.watch(paths.src + 'img/**/*', ['images-watch']);
-  gulp.watch(paths.src + 'sass/**/*.scss', ['css-watch']);
-  gulp.watch(paths.src + 'js/main.js', ['js-main-watch']);
-  gulp.watch(paths.src + 'js/vendor/**/*.js', ['js-vendor-watch']);
-  gulp.watch(paths.src + 'templates/**/*.twig', ['twig-watch']);
-  gulp.watch([paths.src + '*.xml', paths.src + '*.txt'], ['copy:misc-watch']);
+  gulp.watch(paths.src + 'img/**/*', ['images']);
+  gulp.watch(paths.src + 'sass/**/*.scss', ['css']);
+  gulp.watch(paths.src + 'js/main.js', ['js-main']);
+  gulp.watch(paths.src + 'js/vendor/**/*.js', ['js-vendor']);
+  gulp.watch(paths.src + 'templates/**/*.{twig,html}', ['twig']);
+  gulp.watch([paths.src + '*.xml', paths.src + '*.txt'], ['copy:misc']);
+  gulp.watch(paths.dist + '*.html').on('change', browserSync.reload);
 });
 
 // Default
 gulp.task('default', function(done) {
-  runSequence('build',
-    ['gulp-watch', 'browser-sync'],
-    done
-  )
+  runSequence('build', ['gulp-watch', 'browser-sync'], done )
 });
 
 // Build
 gulp.task('build', function (done) {
-  runSequence('clean:dist',
-    ['css', 'js-bootstrap', 'js-vendor', 'js-main', 'images', 'twig', 'copy:misc'],
-    done
-  )
+  runSequence('clean:dist', ['css', 'js-bootstrap', 'js-vendor', 'js-main', 'images', 'twig', 'copy:misc'], done )
 })
 
 // Watch
 gulp.task('watch', function(done) {
-  runSequence('gulp-watch',
-    ['browser-sync'],
-    done
-  )
+  runSequence('gulp-watch', ['browser-sync'], done )
 });
 
 // Deploy
