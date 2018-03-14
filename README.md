@@ -81,4 +81,4 @@ Based on [Frontie](https://github.com/tomaszbujnowicz/frontie)
 
 ## Copyright and license
 
-Copyright 2017 Tomasz Bujnowicz under the [MIT license](http://opensource.org/licenses/MIT).
+Copyright 2018 Tomasz Bujnowicz under the [MIT license](http://opensource.org/licenses/MIT).
