@@ -1,0 +1,12 @@
+/*
+  Theming Bootstrap
+  Based on http://getbootstrap.com/docs/4.1/getting-started/theming/
+*/
+
+// Variable overrides
+@import "_variables";
+
+// Bootstrap and its default variables
+@import "node_modules/bootstrap/scss/bootstrap";
+
+// Custom Styles

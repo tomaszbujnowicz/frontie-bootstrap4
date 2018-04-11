@@ -51,7 +51,7 @@ gulp.task('clean:dist', function() {
 
 // CSS
 gulp.task('css', function () {
-  return gulp.src(paths.src + 'sass/bootstrap.scss')
+  return gulp.src(paths.src + 'sass/custom.scss')
     .pipe(plumber({ errorHandler: onError }))
     .pipe(sourcemaps.init())
     .pipe(sass({ outputStyle: 'compressed' }))
@@ -72,13 +72,13 @@ gulp.task('sass-lint', function () {
 // JS Bootstrap
 gulp.task('js-bootstrap', function() {
   return gulp.src([
-    paths.src + 'js/bootstrap/popper.min.js',
-    paths.src + 'js/bootstrap/bootstrap.min.js'
+    'node_modules/popper.js/dist/umd/popper.min.js',
+    'node_modules/bootstrap/dist/js/bootstrap.min.js'
   ])
     .pipe(plumber({ errorHandler: onError }))
     .pipe(sourcemaps.init())
     .pipe(concat('bootstrap.js'))
-    .pipe(uglify())
+    //.pipe(uglify())
     .pipe(sourcemaps.write('./', {addComment: false}))
     .pipe(gulp.dest(paths.dist + 'js'))
     .pipe(browserSync.reload({stream:true}))
