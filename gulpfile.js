@@ -125,7 +125,8 @@ gulp.task('twig',function(){
   return gulp.src([
     paths.src + 'templates/**/*.{twig,html}',
     '!' + paths.src + 'templates/layouts/**/*.{twig,html}',
-    '!' + paths.src + 'templates/components/**/*.{twig,html}'
+    '!' + paths.src + 'templates/components/**/*.{twig,html}',
+    '!' + paths.src + 'templates/partials/**/*.{twig,html}'
   ])
     .pipe(plumber({
       errorHandler: function (error) {
