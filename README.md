@@ -64,7 +64,7 @@ gulp deploy
   Production files can be found at /dist
 
 * CSS  
-  The main file is located at /sass/main.scss
+  The main file is located at /sass/custom.scss
 
 * JS  
   The main file is located at /js/main.js
