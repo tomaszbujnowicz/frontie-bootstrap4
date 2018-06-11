@@ -1,23 +1,28 @@
-// Global requires
-var gulp = require('gulp'),
-    autoprefixer = require('gulp-autoprefixer'),
-    browserSync = require('browser-sync'),
-    changed = require('gulp-changed'),
-    concat = require('gulp-concat'),
-    del = require ('del'),
-    foreach = require('gulp-foreach'),
-    ghPages = require('gulp-gh-pages'),
-    notify = require('gulp-notify'),
-    plumber = require('gulp-plumber'),
-    reload = browserSync.reload,
-    runSequence = require('run-sequence'),
-    sass = require('gulp-sass'),
-    sassLint = require('gulp-sass-lint'),
-    sourcemaps = require('gulp-sourcemaps'),
-    twig = require('gulp-twig'),
-    uglify = require('gulp-uglify');
-
-// Paths
+/**
+ * Variables
+ */
+var gulp           = require('gulp'),
+    autoprefixer   = require('gulp-autoprefixer'),
+    batch          = require('gulp-batch'),
+    browserSync    = require('browser-sync'),
+    changed        = require('gulp-changed'),
+    concat         = require('gulp-concat'),
+    del            = require ('del'),
+    foreach        = require('gulp-foreach'),
+    ghPages        = require('gulp-gh-pages'),
+    notify         = require('gulp-notify'),
+    plumber        = require('gulp-plumber'),
+    reload         = browserSync.reload,
+    runSequence    = require('run-sequence'),
+    sass           = require('gulp-sass'),
+    sassLint       = require('gulp-sass-lint'),
+    sourcemaps     = require('gulp-sourcemaps'),
+    twig           = require('gulp-twig'),
+    uglify         = require('gulp-uglify'),
+    watch          = require('gulp-watch');
+/**
+ * Paths
+ */
 var paths = {
   dist: 'dist/',
   src: 'src/',
@@ -59,7 +64,9 @@ var paths = {
   }
 };
 
-// Catch Stream Errors
+/**
+ * Catch stream errors
+ */
 var onError = function (err) {
   notify.onError({
     title: "Gulp error in " + err.plugin,
@@ -67,7 +74,9 @@ var onError = function (err) {
   })(err);
 };
 
-// Browser Sync
+/**
+ * Browser Sync
+ */
 gulp.task('browser-sync', function() {
   browserSync.init(null, {
     files: [paths.html],
@@ -78,12 +87,16 @@ gulp.task('browser-sync', function() {
   });
 });
 
-// Clean dist
+/**
+ * Clean dist
+ */
 gulp.task('clean:dist', function() {
   return del.sync('dist');
 })
 
-// CSS
+/**
+ * CSS
+ */
 gulp.task('css', function () {
   return gulp.src(paths.sass.input)
     .pipe(plumber({ errorHandler: onError }))
@@ -95,7 +108,9 @@ gulp.task('css', function () {
     .pipe(browserSync.reload({stream:true}))
 });
 
-// SASS Lint
+/**
+ * Sass Lint
+ */
 gulp.task('sass-lint', function () {
   return gulp.src(paths.sass.lint)
     .pipe(sassLint())
@@ -103,7 +118,9 @@ gulp.task('sass-lint', function () {
     .pipe(sassLint.failOnError())
 });
 
-// JS Bootstrap
+/**
+ * JS Bootstrap
+ */
 gulp.task('js:bootstrap', function() {
   return gulp.src([
     paths.bootstrap.popper,
@@ -117,7 +134,9 @@ gulp.task('js:bootstrap', function() {
     .pipe(browserSync.reload({stream:true}))
 });
 
-// JS Vendor
+/**
+ * JS Vendor
+ */
 gulp.task('js:vendor', function() {
   return gulp.src(paths.jsVendor.input)
     .pipe(plumber({ errorHandler: onError }))
@@ -129,7 +148,9 @@ gulp.task('js:vendor', function() {
     .pipe(browserSync.reload({stream:true}))
 });
 
-// JS Main
+/**
+ * JS Main
+ */
 gulp.task('js:main',function(){
   return gulp.src(paths.js.input)
     .pipe(plumber({ errorHandler: onError }))
@@ -141,7 +162,9 @@ gulp.task('js:main',function(){
     .pipe(browserSync.reload({stream:true}))
 });
 
-// Images
+/**
+ * Images
+ */
 gulp.task('images', function() {
   return gulp.src([
     paths.img.input
@@ -153,7 +176,9 @@ gulp.task('images', function() {
     .pipe(browserSync.reload({stream:true}))
 });
 
-// Twig
+/**
+ * Twig
+ */
 gulp.task('twig',function(){
   return gulp.src([
     paths.twig.inputAll,
@@ -174,7 +199,9 @@ gulp.task('twig',function(){
     .pipe(gulp.dest(paths.dist));
 });
 
-// Copy Miscellaneous Files
+/**
+ * Copy miscellaneous files
+ */
 gulp.task('copy:misc', function() {
   return gulp.src([
     paths.misc.xml,
@@ -185,25 +212,44 @@ gulp.task('copy:misc', function() {
     .pipe(browserSync.reload({stream:true}))
 });
 
-// Gulp Watch
-gulp.task('gulp-watch', function() {
-  gulp.watch(paths.img.input, ['images']);
-  gulp.watch(paths.sass.inputAll, ['css']);
-  gulp.watch(paths.js.input, ['js:main']);
-  gulp.watch(paths.jsVendor.input, ['js:vendor']);
-  gulp.watch(paths.twig.inputAll, ['twig']);
-  gulp.watch([paths.misc.xml, paths.misc.txt], ['copy:misc']);
+/**
+ * Task: Gulp Watch Sequence
+ */
+
+gulp.task('watch-files', function () {
+  watch(paths.img.input, batch(function (events, done) {
+    gulp.start('images', done);
+  }));
+  watch(paths.sass.inputAll, batch(function (events, done) {
+    gulp.start('css', done);
+  }));
+  watch(paths.js.input, batch(function (events, done) {
+    gulp.start('js:main', done);
+  }));
+  watch(paths.jsVendor.input, batch(function (events, done) {
+    gulp.start('js:vendor', done);
+  }));
+  watch(paths.twig.inputAll, batch(function (events, done) {
+    gulp.start('twig', done);
+  }));
+  watch([paths.misc.xml, paths.misc.txt], batch(function (events, done) {
+    gulp.start('copy:misc', done);
+  }));
 });
 
-// Gulp Default
+/**
+ * Task: Gulp Default
+ */
 gulp.task('default', function(done) {
   runSequence('build', [
-    'gulp-watch',
+    'watch-files',
     'browser-sync'
   ], done )
 });
 
-// Gulp Build
+/**
+ * Task: Gulp Build
+ */
 gulp.task('build', function (done) {
   runSequence('clean:dist', [
     'css',
@@ -216,14 +262,18 @@ gulp.task('build', function (done) {
   ], done )
 })
 
-// Gulp Watch
+/**
+ * Task: Gulp Watch
+ */
 gulp.task('watch', function(done) {
-  runSequence('gulp-watch', [
+  runSequence('watch-files', [
     'browser-sync'
   ], done )
 });
 
-// Gulp Deploy
+/**
+ * Task: Gulp Deploy
+ */
 gulp.task('deploy', function() {
   return gulp.src(paths.deploy)
     .pipe(ghPages());
