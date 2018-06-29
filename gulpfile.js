@@ -97,7 +97,7 @@ gulp.task('clean:dist', function() {
 /**
  * CSS
  */
-gulp.task('css', function () {
+gulp.task('css', function (done) {
   return gulp.src(paths.sass.input)
     .pipe(plumber({ errorHandler: onError }))
     .pipe(sourcemaps.init())
@@ -106,6 +106,7 @@ gulp.task('css', function () {
     .pipe(sourcemaps.write('./', {addComment: false}))
     .pipe(gulp.dest(paths.sass.output))
     .pipe(browserSync.reload({stream:true}))
+    done();
 });
 
 /**
@@ -121,7 +122,7 @@ gulp.task('sass-lint', function () {
 /**
  * JS Bootstrap
  */
-gulp.task('js:bootstrap', function() {
+gulp.task('js:bootstrap', function (done) {
   return gulp.src([
     paths.bootstrap.popper,
     paths.bootstrap.js
@@ -132,12 +133,13 @@ gulp.task('js:bootstrap', function() {
     .pipe(sourcemaps.write('./', {addComment: false}))
     .pipe(gulp.dest(paths.bootstrap.output))
     .pipe(browserSync.reload({stream:true}))
+    done();
 });
 
 /**
  * JS Vendor
  */
-gulp.task('js:vendor', function() {
+gulp.task('js:vendor', function (done) {
   return gulp.src(paths.jsVendor.input)
     .pipe(plumber({ errorHandler: onError }))
     .pipe(sourcemaps.init())
@@ -146,12 +148,13 @@ gulp.task('js:vendor', function() {
     .pipe(sourcemaps.write('./', {addComment: false}))
     .pipe(gulp.dest(paths.jsVendor.output))
     .pipe(browserSync.reload({stream:true}))
+    done();
 });
 
 /**
  * JS Main
  */
-gulp.task('js:main',function(){
+gulp.task('js:main', function (done) {
   return gulp.src(paths.js.input)
     .pipe(plumber({ errorHandler: onError }))
     .pipe(sourcemaps.init())
@@ -160,12 +163,13 @@ gulp.task('js:main',function(){
     .pipe(sourcemaps.write('./', {addComment: false}))
     .pipe(gulp.dest(paths.js.output))
     .pipe(browserSync.reload({stream:true}))
+    done();
 });
 
 /**
  * Images
  */
-gulp.task('images', function() {
+gulp.task('images', function (done) {
   return gulp.src([
     paths.img.input
   ], {
@@ -174,12 +178,13 @@ gulp.task('images', function() {
     .pipe(changed(paths.img.output))
     .pipe(gulp.dest(paths.img.output))
     .pipe(browserSync.reload({stream:true}))
+    done();
 });
 
 /**
  * Twig
  */
-gulp.task('twig',function(){
+gulp.task('twig', function (done) {
   return gulp.src([
     paths.twig.inputAll,
     paths.twig.inputLayouts,
@@ -196,13 +201,14 @@ gulp.task('twig',function(){
         .pipe(twig())
     }))
     .pipe(changed(paths.dist))
-    .pipe(gulp.dest(paths.dist));
+    .pipe(gulp.dest(paths.dist))
+    done();
 });
 
 /**
  * Copy miscellaneous files
  */
-gulp.task('copy:misc', function() {
+gulp.task('copy:misc', function (done) {
   return gulp.src([
     paths.misc.xml,
     paths.misc.txt
@@ -210,6 +216,7 @@ gulp.task('copy:misc', function() {
     .pipe(changed(paths.dist))
     .pipe(gulp.dest(paths.dist))
     .pipe(browserSync.reload({stream:true}))
+    done();
 });
 
 /**
@@ -217,24 +224,24 @@ gulp.task('copy:misc', function() {
  */
 
 gulp.task('watch-files', function () {
-  watch(paths.img.input, batch(function (events, done) {
-    gulp.start('images', done);
-  }));
-  watch(paths.sass.inputAll, batch(function (events, done) {
-    gulp.start('css', done);
-  }));
-  watch(paths.js.input, batch(function (events, done) {
-    gulp.start('js:main', done);
-  }));
-  watch(paths.jsVendor.input, batch(function (events, done) {
-    gulp.start('js:vendor', done);
-  }));
-  watch(paths.twig.inputAll, batch(function (events, done) {
-    gulp.start('twig', done);
-  }));
-  watch([paths.misc.xml, paths.misc.txt], batch(function (events, done) {
-    gulp.start('copy:misc', done);
-  }));
+  watch(paths.img.input, function () {
+    gulp.start('images');
+  });
+  watch(paths.sass.inputAll, function () {
+    gulp.start('css');
+  });
+  watch(paths.js.input, function () {
+    gulp.start('js:main');
+  });
+  watch(paths.jsVendor.input, function () {
+    gulp.start('js:vendor');
+  });
+  watch(paths.twig.inputAll, function () {
+    gulp.start('twig');
+  });
+  watch([paths.misc.xml, paths.misc.txt], function () {
+    gulp.start('copy:misc');
+  });
 });
 
 /**
